@@ -1,7 +1,7 @@
 import { CalendarDays, CheckCircle2, ConciergeBell, Star, Wifi } from "lucide-react";
 import React, { useState } from "react";
 
-const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:5000";
+const apiUrl = (import.meta.env.VITE_API_URL || "http://localhost:5000").replace(/\/$/, "");
 
 const initialBooking = {
   fullName: "",
@@ -49,6 +49,12 @@ function Home() {
     setIsSubmitting(true);
     setStatus("");
 
+    if (new Date(booking.checkOut) <= new Date(booking.checkIn)) {
+      setStatus("Check out date must be after check in date.");
+      setIsSubmitting(false);
+      return;
+    }
+
     try {
       const response = await fetch(`${apiUrl}/api/bookings`, {
         method: "POST",
@@ -64,7 +70,11 @@ function Home() {
       setStatus("Your booking request has been received. Our team will contact you shortly.");
       setBooking(initialBooking);
     } catch (error) {
-      setStatus(error.message || "Unable to send booking request right now.");
+      setStatus(
+        error.message === "Failed to fetch"
+          ? "Cannot connect to the backend. Check VITE_API_URL on Render and make sure the backend is running."
+          : error.message || "Unable to send booking request right now."
+      );
     } finally {
       setIsSubmitting(false);
     }
@@ -121,7 +131,14 @@ function Home() {
             </label>
             <label>
               Check Out
-              <input type="date" name="checkOut" value={booking.checkOut} onChange={handleChange} required />
+              <input
+                type="date"
+                name="checkOut"
+                value={booking.checkOut}
+                min={booking.checkIn || undefined}
+                onChange={handleChange}
+                required
+              />
             </label>
             <label>
               Guests

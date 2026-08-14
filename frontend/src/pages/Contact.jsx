@@ -1,7 +1,7 @@
 import { Mail, MapPin, Phone } from "lucide-react";
 import React, { useState } from "react";
 
-const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:5000";
+const apiUrl = (import.meta.env.VITE_API_URL || "http://localhost:5000").replace(/\/$/, "");
 
 const initialMessage = {
   name: "",
@@ -40,7 +40,11 @@ function Contact() {
       setStatus("Thank you. Your message has been sent successfully.");
       setForm(initialMessage);
     } catch (error) {
-      setStatus(error.message || "Unable to send message right now.");
+      setStatus(
+        error.message === "Failed to fetch"
+          ? "Cannot connect to the backend. Check VITE_API_URL on Render and make sure the backend is running."
+          : error.message || "Unable to send message right now."
+      );
     } finally {
       setIsSubmitting(false);
     }
