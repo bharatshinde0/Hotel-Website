@@ -1,0 +1,17 @@
+{
+  "name": "luxury-hotel-mern",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Luxury Hotel MERN stack website with React pages and Express/MongoDB APIs.",
+  "scripts": {
+    "dev": "concurrently \"npm run server\" \"npm run client\"",
+    "server": "npm --prefix backend run dev",
+    "client": "npm --prefix frontend run dev",
+    "build": "npm --prefix frontend run build",
+    "start": "npm --prefix backend start",
+    "install-all": "npm install && npm --prefix backend install && npm --prefix frontend install"
+  },
+  "devDependencies": {
+    "concurrently": "^9.2.1"
+  }
+}
